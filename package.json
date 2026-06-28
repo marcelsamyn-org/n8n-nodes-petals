@@ -1,0 +1,58 @@
+{
+  "name": "n8n-nodes-petals",
+  "version": "0.2.0",
+  "description": "n8n node to ingest documents, files, transcripts, and metrics into your Petals assistant memory",
+  "keywords": [
+    "n8n-community-node-package",
+    "petals",
+    "memory"
+  ],
+  "license": "MIT",
+  "homepage": "https://petals.chat",
+  "author": {
+    "name": "Marcel Samyn",
+    "email": "marcel@samyn.co"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelsamyn-org/n8n-nodes-petals.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "packageManager": "pnpm@10.32.0",
+  "scripts": {
+    "build": "n8n-node build && node scripts/copy-icons.mjs",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease",
+    "format": "prettier nodes credentials --write"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/PetalsApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/PetalsMemory/PetalsMemory.node.js"
+    ]
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "eslint": "^9.39.0",
+    "n8n-workflow": "*",
+    "prettier": "^3.3.2",
+    "release-it": "^20.0.0",
+    "typescript": "^5.5.4"
+  }
+}

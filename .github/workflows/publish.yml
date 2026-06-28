@@ -1,0 +1,74 @@
+# Publishes n8n-nodes-petals to npm with provenance.
+#
+# Starting May 1 2026, n8n requires community nodes to be published via GitHub
+# Actions with npm provenance — a cryptographic attestation that the package was
+# built by this exact workflow, from this public repo and commit. (npm rejects
+# provenance from private source repos, which is why this node lives in its own
+# public repo rather than the Petals app monorepo.)
+#
+# ─── RELEASE FLOW ───────────────────────────────────────────────────────────────
+#
+# Locally:
+#
+#   pnpm run release
+#
+# `n8n-node release` (release-it) bumps the version interactively, writes the
+# changelog, commits, tags `v<version>`, and pushes. That tag push triggers this
+# job, where the same command detects CI and instead runs lint → build →
+# `npm publish` with provenance.
+#
+# ─── ONE-TIME NPM AUTH (pick one) ───────────────────────────────────────────────
+#
+# Option A — OIDC Trusted Publishing (recommended, no long-lived secrets):
+#   npmjs.com → package settings → "Trusted Publishers" → add a publisher:
+#     Repository:     marcelsamyn-org/n8n-nodes-petals
+#     Workflow name:  publish.yml
+#   Leave NPM_TOKEN unset. The first publish of a brand-new package can't use a
+#   trusted publisher yet, so seed it once with Option B.
+#
+# Option B — npm Granular token (works for the first publish):
+#   npmjs.com → Access Tokens → Granular token, "Read and write" on this package
+#   → add it as the NPM_TOKEN repo secret.
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Mint the OIDC token npm uses for the provenance attestation (and for
+      # trusted publishing when no NPM_TOKEN is set).
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # In CI, `n8n-node release` runs lint → build → `npm publish` with
+      # provenance. NODE_AUTH_TOKEN is consumed only under Option B; with trusted
+      # publishing it is empty and npm falls back to the OIDC exchange.
+      - name: Release
+        run: pnpm run release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

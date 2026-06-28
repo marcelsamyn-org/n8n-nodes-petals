@@ -1,0 +1,14 @@
+{
+  "node": "n8n-nodes-petals.petalsMemory",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Productivity", "Miscellaneous"],
+  "resources": {
+    "credentialDocumentation": [
+      { "url": "https://petals.chat/guides/ingestion-api-101" }
+    ],
+    "primaryDocumentation": [
+      { "url": "https://petals.chat/guides/ingestion-api-101" }
+    ]
+  }
+}
