@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-petals",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "n8n node to ingest documents, files, transcripts, and metrics into your Petals assistant memory",
   "keywords": [
     "n8n-community-node-package",
